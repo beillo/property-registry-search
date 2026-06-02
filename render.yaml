@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: imoveis-bauru
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT --workers 1
+    healthCheckPath: /login
+    envVars:
+      - key: APP_PASSWORD
+        sync: false       # defina no dashboard do Render
+      - key: SECRET_KEY
+        generateValue: true

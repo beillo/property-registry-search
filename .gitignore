@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+
+# banco local — deploy usa imoveis_bauru.db.gz
+imoveis_bauru.db
+
+# dados brutos, não vão pro deploy
+ExtracaoDadosImoveisGeoPixel.csv
+explorar_colunas.html

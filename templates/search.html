@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imóveis Bauru</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; font-size: .9rem;
+         color: #111; background: #f4f4f5; }
+
+  /* ── top bar ── */
+  .bar {
+    background: #fff; border-bottom: 1px solid #e4e4e7;
+    padding: .7rem 1.25rem;
+    display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .bar-title { font-weight: 600; font-size: .95rem; white-space: nowrap; }
+  .bar form { display: flex; gap: .5rem; flex: 1; min-width: 220px; }
+  .bar input {
+    flex: 1; padding: .475rem .75rem; font-size: .9rem;
+    border: 1px solid #d4d4d8; border-radius: 6px; outline: none;
+  }
+  .bar input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+  .bar button {
+    padding: .475rem 1rem; font-size: .875rem; font-weight: 500;
+    background: #2563eb; color: #fff; border: none; border-radius: 6px; cursor: pointer;
+    white-space: nowrap;
+  }
+  .bar button:hover { background: #1d4ed8; }
+  .bar-logout { font-size: .8rem; color: #71717a; text-decoration: none; white-space: nowrap; }
+  .bar-logout:hover { color: #111; }
+
+  /* ── content ── */
+  .content { padding: 1rem 1.25rem; }
+  .meta { font-size: .8rem; color: #71717a; margin-bottom: .75rem; }
+  .meta strong { color: #111; }
+
+  /* ── table ── */
+  .wrap { overflow-x: auto; }
+  table {
+    width: 100%; border-collapse: collapse;
+    background: #fff; border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.07);
+    font-size: .85rem;
+  }
+  th {
+    background: #f4f4f5; text-align: left;
+    padding: .55rem .75rem;
+    font-size: .75rem; font-weight: 600; color: #52525b;
+    text-transform: uppercase; letter-spacing: .04em;
+    border-bottom: 1px solid #e4e4e7; white-space: nowrap;
+  }
+  td {
+    padding: .5rem .75rem; border-bottom: 1px solid #f0f0f0;
+    vertical-align: top; max-width: 220px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #fafafa; }
+  td.mono { font-family: ui-monospace, monospace; font-size: .8rem; }
+
+  /* ── empty state ── */
+  .empty { text-align: center; padding: 3.5rem 1rem; color: #a1a1aa; }
+  .empty strong { color: #52525b; }
+
+  /* ── pagination ── */
+  .pages {
+    display: flex; gap: .35rem; justify-content: center;
+    margin-top: 1.25rem; flex-wrap: wrap;
+  }
+  .pages a, .pages span {
+    padding: .35rem .6rem; border-radius: 5px;
+    font-size: .8rem; text-decoration: none;
+  }
+  .pages a { background: #fff; border: 1px solid #d4d4d8; color: #333; }
+  .pages a:hover { background: #f4f4f5; }
+  .pages .cur { background: #2563eb; color: #fff; border: 1px solid #2563eb; font-weight: 500; }
+  .pages .dots { color: #a1a1aa; border: none; }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <span class="bar-title">Imóveis Bauru</span>
+  <form method="get" action="/busca">
+    <input type="text" name="q" value="{{ q }}"
+           placeholder="Endereço, CEP, inscrição ou nome…" autofocus>
+    <button type="submit">Buscar</button>
+  </form>
+  <a class="bar-logout" href="/logout">Sair</a>
+</div>
+
+<div class="content">
+
+{% if q %}
+  {% if total > 0 %}
+  <p class="meta">
+    <strong>{{ "{:,}".format(total).replace(",", ".") }}</strong>
+    resultado{{ "s" if total != 1 else "" }} para
+    <strong>{{ q }}</strong>
+    &mdash; página {{ page }} de {{ total_pages }}
+  </p>
+
+  <div class="wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Inscrição</th>
+        <th>Nome / Responsável</th>
+        <th>Endereço</th>
+        <th>Bairro</th>
+        <th>CEP</th>
+        <th>Terreno m²</th>
+        <th>Edificado m²</th>
+        <th>Finalidade</th>
+        <th>Classificação</th>
+        <th>Ano</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td class="mono" title="{{ row.InscrFisico }}">{{ row.InscrFisico }}</td>
+        <td title="{{ row.NomeResponsavelTributario }}">{{ row.NomeResponsavelTributario }}</td>
+        <td title="{{ row.EnderecoImovel }}">{{ row.EnderecoImovel }}</td>
+        <td title="{{ row.BairroImovel }}">{{ row.BairroImovel }}</td>
+        <td class="mono">{{ row.CepImovel or "—" }}</td>
+        <td>{{ "%.0f"|format(row.AreaTerreno) if row.AreaTerreno else "—" }}</td>
+        <td>{{ "%.0f"|format(row.TotalAreaEdificada) if row.TotalAreaEdificada else "—" }}</td>
+        <td title="{{ row.Finalidade }}">{{ row.Finalidade }}</td>
+        <td>{{ row.ClassificacaoTributaria or "—" }}</td>
+        <td>{{ row.AnoConstrucao or "—" }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+
+  {% if page_range %}
+  <div class="pages">
+    {% if page > 1 %}
+      <a href="/busca?q={{ q | urlencode }}&page={{ page - 1 }}">&#8592; Anterior</a>
+    {% endif %}
+
+    {% if 1 not in page_range %}
+      <a href="/busca?q={{ q | urlencode }}&page=1">1</a>
+      {% if page_range[0] > 2 %}<span class="dots">…</span>{% endif %}
+    {% endif %}
+
+    {% for p in page_range %}
+      {% if p == page %}
+        <span class="cur">{{ p }}</span>
+      {% else %}
+        <a href="/busca?q={{ q | urlencode }}&page={{ p }}">{{ p }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if total_pages not in page_range %}
+      {% if page_range[-1] < total_pages - 1 %}<span class="dots">…</span>{% endif %}
+      <a href="/busca?q={{ q | urlencode }}&page={{ total_pages }}">{{ total_pages }}</a>
+    {% endif %}
+
+    {% if page < total_pages %}
+      <a href="/busca?q={{ q | urlencode }}&page={{ page + 1 }}">Próxima &#8594;</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div class="empty">Nenhum resultado para <strong>{{ q }}</strong>.</div>
+  {% endif %}
+
+{% else %}
+<div class="empty">Use a busca acima para pesquisar imóveis.</div>
+{% endif %}
+
+</div>
+</body>
+</html>
