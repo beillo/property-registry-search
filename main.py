@@ -79,6 +79,8 @@ async def busca(r: Request, q: str = "", page: int = 1):
     tp = math.ceil(total / _db.PAGE_SIZE) if total else 0
     page = min(page, tp) if tp else page
     page_range = list(range(max(1, page - 2), min(tp, page + 2) + 1)) if tp > 1 else []
+    start_item = (page - 1) * _db.PAGE_SIZE + 1 if total else 0
+    end_item = min(page * _db.PAGE_SIZE, total)
 
     return templates.TemplateResponse(
         "search.html",
@@ -90,5 +92,7 @@ async def busca(r: Request, q: str = "", page: int = 1):
             "page": page,
             "total_pages": tp,
             "page_range": page_range,
+            "start_item": start_item,
+            "end_item": end_item,
         },
     )
