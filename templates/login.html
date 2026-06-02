@@ -43,15 +43,6 @@
     pointer-events: none;
   }
 
-  .badge {
-    display: inline-block; margin-bottom: 1.75rem;
-    font-size: .62rem; font-family: ui-monospace, monospace;
-    color: #3b82f6; background: rgba(37,99,235,.08);
-    border: 1px solid rgba(37,99,235,.2);
-    border-radius: 3px; padding: .12rem .5rem;
-    letter-spacing: .08em; text-transform: uppercase;
-  }
-
   .logo { display: flex; align-items: center; gap: .7rem; margin-bottom: 2rem; }
 
   .logo-icon {
@@ -68,10 +59,6 @@
   }
 
   .logo-text h1 { font-size: 1.05rem; font-weight: 600; color: #f0f0f0; }
-  .logo-text p  {
-    font-size: .68rem; color: #52525b;
-    font-family: ui-monospace, monospace; margin-top: .1rem;
-  }
 
   label {
     display: block; margin-bottom: .4rem;
@@ -110,7 +97,6 @@
 </head>
 <body>
 <div class="card">
-  <div class="badge">Bauru · Imóveis</div>
   <div class="logo">
     <div class="logo-icon">
       <svg viewBox="0 0 24 24">
@@ -122,7 +108,6 @@
     </div>
     <div class="logo-text">
       <h1>Data Query</h1>
-      <p>acesso restrito</p>
     </div>
   </div>
   {% if error %}
