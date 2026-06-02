@@ -105,15 +105,32 @@ table {
   background: var(--surf); font-size: .82rem;
 }
 
-/* column header row */
+/* header row */
 thead .hdr th {
   background: var(--surf2);
   text-align: left; padding: .58rem .7rem;
+  padding-right: 1.5rem; /* space for sort arrow */
   font-size: .68rem; font-weight: 600; color: var(--text2);
   text-transform: uppercase; letter-spacing: .05em;
-  border-bottom: 1px solid var(--border); white-space: nowrap;
-  user-select: none;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap; cursor: pointer;
+  position: relative; user-select: none;
+  transition: color .12s;
 }
+thead .hdr th:hover { color: var(--text); }
+
+/* sort arrows via ::after */
+thead .hdr th::after {
+  content: '⇅';
+  position: absolute; right: .4rem; top: 50%; transform: translateY(-50%);
+  font-size: .6rem; color: var(--text3); opacity: 0;
+  transition: opacity .1s;
+}
+thead .hdr th:hover::after { opacity: 1; }
+thead .hdr th.sort-asc::after  { content: '↑'; color: var(--blue); opacity: 1; }
+thead .hdr th.sort-desc::after { content: '↓'; color: var(--blue); opacity: 1; }
+thead .hdr th.sort-asc  { color: var(--text); }
+thead .hdr th.sort-desc { color: var(--text); }
 
 /* filter input row */
 thead .frow th {
@@ -133,7 +150,7 @@ thead .frow th {
 /* data rows */
 td {
   padding: .48rem .7rem; border-bottom: 1px solid var(--border);
-  vertical-align: top; max-width: 210px;
+  vertical-align: top; max-width: 200px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   color: var(--text);
 }
@@ -141,6 +158,7 @@ tbody tr:nth-child(even) td { background: rgba(255,255,255,.018); }
 tbody tr:hover td { background: var(--hover); }
 tr:last-child td { border-bottom: none; }
 td.mono { font-family: ui-monospace, monospace; font-size: .775rem; color: var(--mono); }
+td.num  { color: var(--text2); }
 
 /* ── empty state ── */
 .empty { text-align: center; padding: 4rem 1rem; color: var(--text3); }
@@ -205,24 +223,36 @@ td.mono { font-family: ui-monospace, monospace; font-size: .775rem; color: var(-
       <tr class="hdr">
         <th>Inscrição</th>
         <th>Nome / Responsável</th>
+        <th>Tipo</th>
+        <th>CPF / CNPJ</th>
         <th>Endereço</th>
         <th>CEP</th>
+        <th>End. Corresp.</th>
         <th>Terreno m²</th>
         <th>Edificado m²</th>
         <th>Finalidade</th>
+        <th>Tp. Construção</th>
+        <th>Categoria</th>
+        <th>Conservação</th>
         <th>Classificação</th>
         <th>Ano</th>
       </tr>
-      <tr class="frow" title="Filtros aplicados somente nos resultados desta página">
-        <th><input class="fi" data-col="0" placeholder="filtrar"></th>
-        <th><input class="fi" data-col="1" placeholder="filtrar"></th>
-        <th><input class="fi" data-col="2" placeholder="filtrar"></th>
-        <th><input class="fi" data-col="3" placeholder="filtrar"></th>
-        <th><input class="fi" data-col="4" placeholder="filtrar"></th>
-        <th><input class="fi" data-col="5" placeholder="filtrar"></th>
-        <th><input class="fi" data-col="6" placeholder="filtrar"></th>
-        <th><input class="fi" data-col="7" placeholder="filtrar"></th>
-        <th><input class="fi" data-col="8" placeholder="filtrar"></th>
+      <tr class="frow" title="Filtros aplicados nos resultados desta página">
+        <th><input class="fi" data-col="0"  placeholder="filtrar"></th>
+        <th><input class="fi" data-col="1"  placeholder="filtrar"></th>
+        <th><input class="fi" data-col="2"  placeholder="filtrar"></th>
+        <th><input class="fi" data-col="3"  placeholder="filtrar"></th>
+        <th><input class="fi" data-col="4"  placeholder="filtrar"></th>
+        <th><input class="fi" data-col="5"  placeholder="filtrar"></th>
+        <th><input class="fi" data-col="6"  placeholder="filtrar"></th>
+        <th><input class="fi" data-col="7"  placeholder="filtrar"></th>
+        <th><input class="fi" data-col="8"  placeholder="filtrar"></th>
+        <th><input class="fi" data-col="9"  placeholder="filtrar"></th>
+        <th><input class="fi" data-col="10" placeholder="filtrar"></th>
+        <th><input class="fi" data-col="11" placeholder="filtrar"></th>
+        <th><input class="fi" data-col="12" placeholder="filtrar"></th>
+        <th><input class="fi" data-col="13" placeholder="filtrar"></th>
+        <th><input class="fi" data-col="14" placeholder="filtrar"></th>
       </tr>
     </thead>
     <tbody>
@@ -230,13 +260,19 @@ td.mono { font-family: ui-monospace, monospace; font-size: .775rem; color: var(-
       <tr>
         <td class="mono" title="{{ row.InscrFisico }}">{{ row.InscrFisico }}</td>
         <td title="{{ row.NomeResponsavelTributario }}">{{ row.NomeResponsavelTributario }}</td>
+        <td>{{ row.TipoResponsavelTributario or "—" }}</td>
+        <td class="mono" title="{{ row.CPFCNPJRespTrib }}">{{ row.CPFCNPJRespTrib or "—" }}</td>
         <td title="{{ row.EnderecoImovel }}">{{ row.EnderecoImovel }}</td>
         <td class="mono">{{ row.CepImovel or "—" }}</td>
-        <td>{{ "%.0f"|format(row.AreaTerreno) if row.AreaTerreno else "—" }}</td>
-        <td>{{ "%.0f"|format(row.TotalAreaEdificada) if row.TotalAreaEdificada else "—" }}</td>
+        <td title="{{ row.EnderecoCorresp }}">{{ row.EnderecoCorresp or "—" }}</td>
+        <td class="num">{{ "%.0f"|format(row.AreaTerreno) if row.AreaTerreno else "—" }}</td>
+        <td class="num">{{ "%.0f"|format(row.TotalAreaEdificada) if row.TotalAreaEdificada else "—" }}</td>
         <td title="{{ row.Finalidade }}">{{ row.Finalidade }}</td>
+        <td title="{{ row.TpConstrucao }}">{{ row.TpConstrucao or "—" }}</td>
+        <td>{{ row.Categoria or "—" }}</td>
+        <td>{{ row.Conservacao or "—" }}</td>
         <td title="{{ row.ClassificacaoTributaria }}">{{ row.ClassificacaoTributaria or "—" }}</td>
-        <td>{{ row.AnoConstrucao or "—" }}</td>
+        <td class="num">{{ row.AnoConstrucao or "—" }}</td>
       </tr>
     {% endfor %}
     </tbody>
@@ -291,20 +327,25 @@ td.mono { font-family: ui-monospace, monospace; font-size: .775rem; color: var(-
 
 <script>
 (function () {
-  var inputs = document.querySelectorAll('.fi');
-  if (!inputs.length) return;
+  var tbl = document.getElementById('tbl');
+  if (!tbl) return;
 
-  var tbl    = document.getElementById('tbl');
-  var rows   = tbl ? Array.from(tbl.querySelectorAll('tbody tr')) : [];
+  var tbody  = tbl.querySelector('tbody');
   var badge  = document.getElementById('fbadge');
+  var NUMERIC = {7: 1, 8: 1, 14: 1}; // cols com sort numérico
+  var sortCol = -1, sortAsc = true;
 
-  function run() {
+  // ── Filtros ─────────────────────────────────────────────────────────────────
+  function applyFilters() {
+    var inputs = document.querySelectorAll('.fi');
     var filters = Array.from(inputs)
       .map(function (i) { return { col: +i.dataset.col, val: i.value.toLowerCase().trim() }; })
       .filter(function (f) { return f.val; });
 
+    var allRows = Array.from(tbody.querySelectorAll('tr'));
     var visible = 0;
-    rows.forEach(function (row) {
+
+    allRows.forEach(function (row) {
       var cells = row.querySelectorAll('td');
       var show  = !filters.length || filters.every(function (f) {
         return (cells[f.col] ? cells[f.col].textContent : '').toLowerCase().indexOf(f.val) !== -1;
@@ -314,8 +355,8 @@ td.mono { font-family: ui-monospace, monospace; font-size: .775rem; color: var(-
     });
 
     if (badge) {
-      if (filters.length && visible < rows.length) {
-        badge.textContent = visible + ' de ' + rows.length + ' visíveis nesta página';
+      if (filters.length && visible < allRows.length) {
+        badge.textContent = visible + ' de ' + allRows.length + ' visíveis nesta página';
         badge.style.display = 'inline';
       } else {
         badge.style.display = 'none';
@@ -323,7 +364,51 @@ td.mono { font-family: ui-monospace, monospace; font-size: .775rem; color: var(-
     }
   }
 
-  inputs.forEach(function (i) { i.addEventListener('input', run); });
+  document.querySelectorAll('.fi').forEach(function (i) {
+    i.addEventListener('input', applyFilters);
+  });
+
+  // ── Ordenação por coluna ─────────────────────────────────────────────────────
+  document.querySelectorAll('thead .hdr th').forEach(function (th, idx) {
+    th.addEventListener('click', function () {
+      var asc = (sortCol === idx) ? !sortAsc : true;
+      sortCol = idx;
+      sortAsc = asc;
+
+      // atualiza indicadores visuais
+      document.querySelectorAll('thead .hdr th').forEach(function (h) {
+        h.classList.remove('sort-asc', 'sort-desc');
+      });
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+
+      // ordena linhas
+      var rows = Array.from(tbody.querySelectorAll('tr'));
+      rows.sort(function (a, b) {
+        var ac = a.querySelectorAll('td')[idx];
+        var bc = b.querySelectorAll('td')[idx];
+        var at = ac ? ac.textContent.trim() : '';
+        var bt = bc ? bc.textContent.trim() : '';
+
+        // '—' vai sempre para o fim independente da direção
+        if (at === '—' && bt === '—') return 0;
+        if (at === '—') return 1;
+        if (bt === '—') return -1;
+
+        if (NUMERIC[idx]) {
+          var an = parseFloat(at) || 0;
+          var bn = parseFloat(bt) || 0;
+          return asc ? an - bn : bn - an;
+        }
+        return asc
+          ? at.localeCompare(bt, 'pt-BR', { sensitivity: 'base' })
+          : bt.localeCompare(at, 'pt-BR', { sensitivity: 'base' });
+      });
+
+      rows.forEach(function (r) { tbody.appendChild(r); });
+      applyFilters(); // re-aplica filtros após reordenar
+    });
+  });
+
 }());
 </script>
 

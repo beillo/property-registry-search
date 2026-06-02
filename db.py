@@ -8,9 +8,11 @@ PAGE_SIZE = 20
 _local = threading.local()
 
 _COLS = (
-    "InscrFisico", "NomeResponsavelTributario", "EnderecoImovel",
-    "BairroImovel", "CepImovel", "AreaTerreno", "TotalAreaEdificada",
-    "Finalidade", "ClassificacaoTributaria", "AnoConstrucao",
+    "InscrFisico", "NomeResponsavelTributario", "TipoResponsavelTributario",
+    "CPFCNPJRespTrib", "EnderecoImovel", "CepImovel", "EnderecoCorresp",
+    "AreaTerreno", "TotalAreaEdificada", "Finalidade",
+    "TpConstrucao", "Categoria", "Conservacao",
+    "ClassificacaoTributaria", "AnoConstrucao",
 )
 
 
