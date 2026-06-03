@@ -97,6 +97,25 @@ uvicorn main:app --reload
 
 The app is available at `http://localhost:8000`. On first startup it decompresses `imoveis_bauru.db.gz` automatically if the `.db` file is not present.
 
+## Search Behavior
+
+Queries are executed against an **FTS5 full-text index** built with the `unicode61` tokenizer and diacritic removal, so accented and unaccented characters match interchangeably (e.g., searching `jose` returns records containing `José`).
+
+Each search term is automatically treated as a **prefix match**: the query `rua ana` becomes `"rua"* "ana"*` in FTS5 syntax, matching any token that starts with those strings. This means partial words work — `anto` will match `ANTONIO`.
+
+Multi-word queries require **all terms** to be present (implicit AND). The `db.py` layer also provides a `LIKE`-based fallback for queries that produce an FTS5 syntax error (e.g., queries containing only special characters).
+
+The index covers four fields:
+
+| Field | Content |
+|---|---|
+| `InscrFisico` | Property registration number |
+| `NomeResponsavelTributario` | Owner/taxpayer name |
+| `EnderecoImovel` | Full address with neighborhood and ZIP |
+| `CepImovel` | ZIP code |
+
+Results are ranked by FTS5's built-in `rank` score (BM25-based relevance).
+
 ## Deploy (Render)
 
 Deployment is fully configured via `render.yaml`. The required environment variables are:
