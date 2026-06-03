@@ -2,9 +2,15 @@ __pycache__/
 *.pyc
 .env
 
-# banco local — deploy usa imoveis_bauru.db.gz
+# IDE
+.vscode/
+
+# binários locais
+*.exe
+
+# banco local (deploy usa imoveis_bauru.db.gz)
 imoveis_bauru.db
 
-# dados brutos, não vão pro deploy
+# dados brutos e artefatos de exploração
 ExtracaoDadosImoveisGeoPixel.csv
 explorar_colunas.html
